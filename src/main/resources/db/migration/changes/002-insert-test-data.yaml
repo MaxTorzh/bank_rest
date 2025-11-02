@@ -68,7 +68,7 @@ databaseChangeLog:
                   value: "ACTIVE"
               - column:
                   name: balance
-                  value: 10000.00
+                  value: 10000
               - column:
                   name: user_id
                   value: 1
@@ -90,7 +90,7 @@ databaseChangeLog:
                   value: "ACTIVE"
               - column:
                   name: balance
-                  value: 5000.00
+                  value: 5000
               - column:
                   name: user_id
                   value: 2
@@ -112,7 +112,7 @@ databaseChangeLog:
                   value: "ACTIVE"
               - column:
                   name: balance
-                  value: 7500.00
+                  value: 7500
               - column:
                   name: user_id
                   value: 3

@@ -14,8 +14,8 @@ public interface TransferMapper {
 
     @Mapping(target = "fromCardId", source = "fromCard.id")
     @Mapping(target = "toCardId", source = "toCard.id")
-    @Mapping(target = "fromCardNumber", source = "fromCard.cardNumber")
-    @Mapping(target = "toCardNumber", source = "toCard.cardNumber")
+    @Mapping(target = "fromCardMaskedNumber", source = "fromCard.cardNumber")
+    @Mapping(target = "toCardMaskedNumber", source = "toCard.cardNumber")
     TransferDto toDTO(Transfer transfer);
 
     @Mapping(target = "id", ignore = true)

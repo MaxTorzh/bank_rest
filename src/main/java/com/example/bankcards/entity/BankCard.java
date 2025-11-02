@@ -6,7 +6,6 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -25,8 +24,8 @@ public class BankCard {
     @Column(name = "card_number", nullable = false, unique = true, length = 255)
     private String cardNumber;
 
-    @Column(nullable = false, length = 100)
-    private String cardName;
+    @Column(name = "card_holder_name", nullable = false, length = 100)
+    private String cardHolderName;
 
     @Column(nullable = false)
     private LocalDate expirationDate;
@@ -36,9 +35,9 @@ public class BankCard {
     @Builder.Default
     private CardStatus status = CardStatus.ACTIVE;
 
-    @Column(nullable = false, precision = 15, scale = 2)
+    @Column(nullable = false)
     @Builder.Default
-    private BigDecimal balance = BigDecimal.ZERO;
+    private Long balance = 0L;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)

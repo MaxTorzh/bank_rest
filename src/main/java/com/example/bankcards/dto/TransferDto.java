@@ -4,7 +4,6 @@ import com.example.bankcards.entity.enums.TransferStatus;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Getter
@@ -15,7 +14,7 @@ public class TransferDto {
     private final String fromCardMaskedNumber;
     private final Long toCardId;
     private final String toCardMaskedNumber;
-    private final BigDecimal amount;
+    private final Long amount;
     private final String description;
     private final LocalDateTime transferDate;
     private final TransferStatus status;

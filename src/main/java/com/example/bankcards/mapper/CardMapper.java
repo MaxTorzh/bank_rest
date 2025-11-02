@@ -13,14 +13,16 @@ import java.util.List;
 public interface CardMapper {
 
     @Mapping(target = "cardNumber", source = "cardNumber")
+    @Mapping(target = "cardHolderName", source = "cardHolderName")
     @Mapping(target = "userId", source = "user.id")
-    @Mapping(target = "username", source = "user.name")
+    @Mapping(target = "username", source = "user.username")
     @Mapping(target = "expired", expression = "java(card.isExpired())")
     @Mapping(target = "active", expression = "java(card.isActive())")
     CardDto toDTO(BankCard card);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "cardNumber", ignore = true)
+    @Mapping(target = "cardHolderName", source = "cardHolderName")
     @Mapping(target = "user", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)

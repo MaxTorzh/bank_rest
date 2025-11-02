@@ -77,10 +77,10 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: balance
-                  type: DECIMAL(15,2)
+                  type: BIGINT
                   constraints:
                     nullable: false
-                  defaultValue: 0.00
+                  defaultValue: 0
               - column:
                   name: user_id
                   type: BIGINT
@@ -123,7 +123,7 @@ databaseChangeLog:
                     references: bank_cards(id)
               - column:
                   name: amount
-                  type: DECIMAL(15,2)
+                  type: BIGINT
                   constraints:
                     nullable: false
               - column:
