@@ -1,24 +1,42 @@
 server:
   port: 8080
+  servlet:
+    context-path: /api
 
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/bank_db
     username: bank_user
     password: bank_password
+    driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
       ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
 
   liquibase:
-    change-log: classpath:db/changelog/db.changelog-master.yaml
+    change-log: classpath:db/migration/db.changelog-master.yaml
+    enabled: true
 
 app:
   jwt:
-    secret: "dev-jwt-secret"
+    secret: "bank-jwt-secret-key-2024"
     expiration: 86400000
 
+  encryption:
+    key: "simple-encryption-key-32b"
+
 springdoc:
+  api-docs:
+    path: /v3/api-docs
   swagger-ui:
+    path: /swagger-ui.html
     enabled: true
+
+logging:
+  level:
+    com.bank: INFO
