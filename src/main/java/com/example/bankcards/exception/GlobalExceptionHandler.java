@@ -39,6 +39,32 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(CardNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ApiError handleCardNotFoundException(final CardNotFoundException e) {
+        log.error("404 Card Not Found: {}", e.getMessage(), e);
+        String stackTrace = getStackTrace(e);
+        return new ApiError(
+                HttpStatus.NOT_FOUND,
+                "The required card was not found",
+                e.getMessage(),
+                stackTrace
+        );
+    }
+
+    @ExceptionHandler(TransferNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ApiError handleTransferNotFoundException(final TransferNotFoundException e) {
+        log.error("404 Transfer Not Found: {}", e.getMessage(), e);
+        String stackTrace = getStackTrace(e);
+        return new ApiError(
+                HttpStatus.NOT_FOUND,
+                "The required transfer was not found",
+                e.getMessage(),
+                stackTrace
+        );
+    }
+
     private String getStackTrace(Exception e) {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);

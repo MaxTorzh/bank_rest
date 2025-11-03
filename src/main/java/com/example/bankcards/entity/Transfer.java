@@ -42,16 +42,4 @@ public class Transfer {
     @Column(nullable = false, length = 20)
     @Builder.Default
     private TransferStatus status = TransferStatus.PENDING;
-
-    public boolean isCompleted() {
-        return status == TransferStatus.COMPLETED;
-    }
-
-    public boolean isPending() {
-        return status == TransferStatus.PENDING;
-    }
-
-    public boolean isFailed() {
-        return status == TransferStatus.FAILED;
-    }
 }

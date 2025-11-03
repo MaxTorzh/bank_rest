@@ -47,8 +47,4 @@ public class User {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
-
-    public boolean isAdmin() {
-        return role == Role.ROLE_ADMIN;
-    }
 }

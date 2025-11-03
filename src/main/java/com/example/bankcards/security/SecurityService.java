@@ -1,7 +1,7 @@
 package com.example.bankcards.security;
 
 import com.example.bankcards.entity.User;
-import com.example.bankcards.service.UserService;
+import com.example.bankcards.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;

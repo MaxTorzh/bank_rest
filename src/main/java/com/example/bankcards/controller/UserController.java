@@ -2,7 +2,7 @@ package com.example.bankcards.controller;
 
 import com.example.bankcards.dto.UserDto;
 import com.example.bankcards.entity.enums.Role;
-import com.example.bankcards.service.UserService;
+import com.example.bankcards.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;

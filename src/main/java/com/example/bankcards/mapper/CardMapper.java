@@ -5,7 +5,6 @@ import com.example.bankcards.entity.BankCard;
 import com.example.bankcards.util.CardNumberMasker;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -29,8 +28,4 @@ public interface CardMapper {
     BankCard toEntity(CardDto cardDTO);
 
     List<CardDto> toDTOList(List<BankCard> cards);
-
-    default Page<CardDto> toDTOPage(Page<BankCard> cardPage) {
-        return cardPage.map(this::toDTO);
-    }
 }

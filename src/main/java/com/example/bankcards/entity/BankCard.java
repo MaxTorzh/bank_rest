@@ -58,8 +58,4 @@ public class BankCard {
     public boolean isActive() {
         return status == CardStatus.ACTIVE && !isExpired();
     }
-
-    public boolean isBlocked() {
-        return status == CardStatus.BLOCKED;
-    }
 }

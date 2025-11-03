@@ -1,4 +1,4 @@
-package com.example.bankcards.service;
+package com.example.bankcards.service.user;
 
 import com.example.bankcards.dto.UserDto;
 import com.example.bankcards.entity.User;
