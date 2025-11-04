@@ -5,6 +5,7 @@ import com.example.bankcards.dto.TransferRequest;
 import com.example.bankcards.entity.BankCard;
 import com.example.bankcards.entity.Transfer;
 import com.example.bankcards.entity.User;
+import com.example.bankcards.entity.enums.Currency;
 import com.example.bankcards.entity.enums.TransferStatus;
 import com.example.bankcards.exception.BadRequestException;
 import com.example.bankcards.exception.CardNotFoundException;
@@ -20,7 +21,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+
 
 @Service
 @Transactional
@@ -44,61 +46,14 @@ public class TransferServiceImpl implements TransferService {
         BankCard toCard = cardRepository.findById(request.getToCardId())
                 .orElseThrow(() -> new CardNotFoundException("Destination card not found"));
 
-        validateTransfer(fromCard, toCard, request.getAmount());
+        validateTransfer(fromCard, toCard, request.getAmount(), request.getCurrency());
 
         Transfer transfer = transferMapper.toEntityFromRequest(request);
         transfer.setFromCard(fromCard);
         transfer.setToCard(toCard);
+        transfer.setCurrency(request.getCurrency());
 
         return processTransfer(transfer);
-    }
-
-    private void validateTransfer(BankCard fromCard, BankCard toCard, Long amount) {
-        if (fromCard.getId().equals(toCard.getId())) {
-            throw new BadRequestException("Cannot transfer to the same card");
-        }
-
-        if (!fromCard.isActive()) {
-            throw new BadRequestException("Source card is not active");
-        }
-
-        if (!toCard.isActive()) {
-            throw new BadRequestException("Destination card is not active");
-        }
-
-        if (amount <= 0) {
-            throw new BadRequestException("Amount must be positive");
-        }
-
-        if (fromCard.getBalance() < amount) {
-            throw new BadRequestException("Insufficient funds");
-        }
-
-        if (amount > 1_000_000L) { // Лимит перевода
-            throw new BadRequestException("Transfer amount exceeds limit");
-        }
-    }
-
-    private TransferDto processTransfer(Transfer transfer) {
-        try {
-            transfer.getFromCard().setBalance(transfer.getFromCard().getBalance() - transfer.getAmount());
-
-            transfer.getToCard().setBalance(transfer.getToCard().getBalance() + transfer.getAmount());
-
-            transfer.setStatus(TransferStatus.COMPLETED);
-
-            Transfer savedTransfer = transferRepository.save(transfer);
-            log.info("Transfer completed successfully: {} from card {} to card {}",
-                    transfer.getAmount(), transfer.getFromCard().getId(), transfer.getToCard().getId());
-
-            return transferMapper.toDTO(savedTransfer);
-
-        } catch (Exception e) {
-            transfer.setStatus(TransferStatus.FAILED);
-            transferRepository.save(transfer);
-            log.error("Transfer failed: {}", e.getMessage());
-            throw new BadRequestException("Transfer failed: " + e.getMessage());
-        }
     }
 
     @Override
@@ -156,7 +111,7 @@ public class TransferServiceImpl implements TransferService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<TransferDto> getTransfersByPeriod(LocalDateTime startDate, LocalDateTime endDate, Pageable pageable) {
+    public Page<TransferDto> getTransfersByPeriod(OffsetDateTime startDate, OffsetDateTime endDate, Pageable pageable) {
         return transferRepository.findByTransferDateBetween(startDate, endDate, pageable)
                 .map(transferMapper::toDTO);
     }
@@ -195,7 +150,7 @@ public class TransferServiceImpl implements TransferService {
 
     @Override
     @Transactional(readOnly = true)
-    public Long getTotalOutgoingAmountForPeriod(LocalDateTime startDate, LocalDateTime endDate) {
+    public Long getTotalOutgoingAmountForPeriod(OffsetDateTime startDate, OffsetDateTime endDate) {
         User currentUser = securityService.getCurrentUser();
         Long totalAmount = transferRepository.getTotalOutgoingAmountByUserIdAndPeriod(
                 currentUser.getId(), startDate, endDate);
@@ -203,8 +158,77 @@ public class TransferServiceImpl implements TransferService {
         return totalAmount != null ? totalAmount : 0L;
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public boolean isTransferParticipant(Long transferId) {
+        User currentUser = securityService.getCurrentUser();
+        Transfer transfer = transferRepository.findById(transferId)
+                .orElseThrow(() -> new TransferNotFoundException("Transfer not found with id: " + transferId));
+
+        return isUserParticipant(transfer, currentUser);
+    }
+
     private boolean isUserParticipant(Transfer transfer, User user) {
         return transfer.getFromCard().getUser().getId().equals(user.getId()) ||
                 transfer.getToCard().getUser().getId().equals(user.getId());
+    }
+
+    private void validateTransfer(BankCard fromCard, BankCard toCard, Long amount, Currency currency) {
+        if (fromCard.getId().equals(toCard.getId())) {
+            throw new BadRequestException("Cannot transfer to the same card");
+        }
+
+        if (!fromCard.isActive()) {
+            throw new BadRequestException("Source card is not active");
+        }
+
+        if (!toCard.isActive()) {
+            throw new BadRequestException("Destination card is not active");
+        }
+
+        if (amount <= 0) {
+            throw new BadRequestException("Amount must be positive");
+        }
+
+        if (fromCard.getBalance() < amount) {
+            throw new BadRequestException("Insufficient funds");
+        }
+
+        if (amount > 1_000_000L) {
+            throw new BadRequestException("Transfer amount exceeds limit");
+        }
+
+        if (fromCard.getCurrency() != currency) {
+            throw new BadRequestException("Source card currency (" + fromCard.getCurrency() +
+                    ") doesn't match transfer currency (" + currency + ")");
+        }
+
+        if (fromCard.getCurrency() != toCard.getCurrency()) {
+            throw new BadRequestException("Currency mismatch: source card (" + fromCard.getCurrency() +
+                    ") and destination card (" + toCard.getCurrency() + ")");
+        }
+    }
+
+    private TransferDto processTransfer(Transfer transfer) {
+        try {
+            transfer.getFromCard().setBalance(transfer.getFromCard().getBalance() - transfer.getAmount());
+
+            transfer.getToCard().setBalance(transfer.getToCard().getBalance() + transfer.getAmount());
+
+            transfer.setStatus(TransferStatus.COMPLETED);
+
+            Transfer savedTransfer = transferRepository.save(transfer);
+            log.info("Transfer completed successfully: {} {} from card {} to card {}",
+                    transfer.getAmount(), transfer.getCurrency(),
+                    transfer.getFromCard().getId(), transfer.getToCard().getId());
+
+            return transferMapper.toDTO(savedTransfer);
+
+        } catch (Exception e) {
+            transfer.setStatus(TransferStatus.FAILED);
+            transferRepository.save(transfer);
+            log.error("Transfer failed: {}", e.getMessage());
+            throw new BadRequestException("Transfer failed: " + e.getMessage());
+        }
     }
 }

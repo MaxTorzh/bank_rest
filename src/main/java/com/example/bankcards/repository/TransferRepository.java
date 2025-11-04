@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Repository
 public interface TransferRepository extends JpaRepository<Transfer, Long> {
@@ -37,8 +37,8 @@ public interface TransferRepository extends JpaRepository<Transfer, Long> {
     @Query("SELECT t FROM Transfer t " +
             "WHERE t.transferDate BETWEEN :startDate AND :endDate")
     Page<Transfer> findByTransferDateBetween(
-            @Param("startDate") LocalDateTime startDate,
-            @Param("endDate") LocalDateTime endDate,
+            @Param("startDate") OffsetDateTime startDate,
+            @Param("endDate") OffsetDateTime endDate,
             Pageable pageable);
 
     @Query("SELECT SUM(t.amount) FROM Transfer t " +
@@ -48,7 +48,7 @@ public interface TransferRepository extends JpaRepository<Transfer, Long> {
             "AND :endDate")
     Long getTotalOutgoingAmountByUserIdAndPeriod(
             @Param("userId") Long userId,
-            @Param("startDate") LocalDateTime startDate,
-            @Param("endDate") LocalDateTime endDate);
+            @Param("startDate") OffsetDateTime startDate,
+            @Param("endDate") OffsetDateTime endDate);
 
 }

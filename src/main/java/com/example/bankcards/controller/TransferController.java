@@ -16,7 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @RestController
 @RequestMapping("/api/transfers")
@@ -74,8 +74,8 @@ public class TransferController {
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @Operation(summary = "Get total outgoing amount for period")
     public ResponseEntity<Long> getTotalOutgoingAmount(
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDate) {
         Long totalAmount = transferService.getTotalOutgoingAmountForPeriod(startDate, endDate);
         return ResponseEntity.ok(totalAmount);
     }
@@ -103,8 +103,8 @@ public class TransferController {
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Get transfers by period (ADMIN only)")
     public ResponseEntity<Page<TransferDto>> getTransfersByPeriod(
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime endDate,
             @PageableDefault(size = 20) Pageable pageable) {
         Page<TransferDto> transfers = transferService.getTransfersByPeriod(startDate, endDate, pageable);
         return ResponseEntity.ok(transfers);

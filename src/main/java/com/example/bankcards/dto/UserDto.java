@@ -4,7 +4,7 @@ import com.example.bankcards.entity.enums.Role;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Getter
 @Builder
@@ -13,6 +13,6 @@ public class UserDto {
     private final String username;
     private final String email;
     private final Role role;
-    private final LocalDateTime createdAt;
+    private final OffsetDateTime createdAt;
     private final Integer cardsCount;
 }

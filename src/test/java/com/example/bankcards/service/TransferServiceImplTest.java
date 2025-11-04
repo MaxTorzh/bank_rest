@@ -25,7 +25,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -76,7 +76,7 @@ class TransferServiceImplTest {
         transfer.setToCard(toCard);
         transfer.setAmount(amount);
         transfer.setStatus(TransferStatus.COMPLETED);
-        transfer.setTransferDate(LocalDateTime.now());
+        transfer.setTransferDate(OffsetDateTime.now());
         return transfer;
     }
 
@@ -197,8 +197,8 @@ class TransferServiceImplTest {
     @Test
     void getTotalOutgoingAmountForPeriod_ShouldReturnTotalAmount() {
         User user = createTestUser(1L);
-        LocalDateTime startDate = LocalDateTime.now().minusDays(7);
-        LocalDateTime endDate = LocalDateTime.now();
+        OffsetDateTime startDate = OffsetDateTime.now().minusDays(7);
+        OffsetDateTime endDate = OffsetDateTime.now();
 
         when(securityService.getCurrentUser()).thenReturn(user);
         when(transferRepository.getTotalOutgoingAmountByUserIdAndPeriod(1L, startDate, endDate)).thenReturn(5000L);
@@ -212,8 +212,8 @@ class TransferServiceImplTest {
     @Test
     void getTotalOutgoingAmountForPeriod_WhenNoTransfers_ShouldReturnZero() {
         User user = createTestUser(1L);
-        LocalDateTime startDate = LocalDateTime.now().minusDays(7);
-        LocalDateTime endDate = LocalDateTime.now();
+        OffsetDateTime startDate = OffsetDateTime.now().minusDays(7);
+        OffsetDateTime endDate = OffsetDateTime.now();
 
         when(securityService.getCurrentUser()).thenReturn(user);
         when(transferRepository.getTotalOutgoingAmountByUserIdAndPeriod(1L, startDate, endDate)).thenReturn(null);

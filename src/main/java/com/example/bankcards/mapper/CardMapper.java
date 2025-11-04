@@ -22,6 +22,7 @@ public interface CardMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "cardNumber", ignore = true)
     @Mapping(target = "cardHolderName", source = "cardHolderName")
+    @Mapping(target = "currency", source = "currency")
     @Mapping(target = "user", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
