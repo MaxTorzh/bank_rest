@@ -16,6 +16,8 @@ public class TestSecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authz -> authz
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/api/users/me").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/api/users").hasRole("ADMIN")
                         .requestMatchers("/api/cards/my/**").hasAnyRole("USER", "ADMIN")
@@ -23,9 +25,9 @@ public class TestSecurityConfig {
                         .requestMatchers("/api/cards/**").hasRole("ADMIN")
                         .requestMatchers("/api/transfers/my/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/api/transfers/**").hasRole("ADMIN")
-                        .anyRequest().denyAll() // Все остальные запросы запрещены
+                        .anyRequest().authenticated()
                 )
-                .httpBasic(httpBasic -> {}); // Используем basic auth для простоты
+                .httpBasic(httpBasic -> {});
 
         return http.build();
     }

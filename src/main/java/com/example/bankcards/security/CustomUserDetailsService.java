@@ -1,15 +1,13 @@
 package com.example.bankcards.security;
 
 import com.example.bankcards.entity.User;
+import com.example.bankcards.exception.UserNotFoundException;
 import com.example.bankcards.service.user.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
-import java.util.Collections;
 
 @Service
 @RequiredArgsConstructor
@@ -19,12 +17,17 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userService.getUserByUsername(username);
+        try {
+            User user = userService.getUserByUsername(username);
 
-        return new org.springframework.security.core.userdetails.User(
-                user.getUsername(),
-                user.getPassword(),
-                Collections.singletonList(new SimpleGrantedAuthority(user.getRole().name()))
-        );
+            return org.springframework.security.core.userdetails.User.builder()
+                    .username(user.getUsername())
+                    .password(user.getPassword())
+                    .authorities(user.getRole().name())
+                    .build();
+
+        } catch (UserNotFoundException e) {
+            throw new UsernameNotFoundException("User not found: " + username);
+        }
     }
 }

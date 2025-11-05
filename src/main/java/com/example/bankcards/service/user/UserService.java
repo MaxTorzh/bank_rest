@@ -25,4 +25,10 @@ public interface UserService {
     User getCurrentUserEntity();
 
     User getUserByUsername(String username);
+
+    boolean existsByUsername(String username);
+
+    boolean existsByEmail(String email);
+
+    User createUser(User user);
 }

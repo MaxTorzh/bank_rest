@@ -30,24 +30,31 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        try {
-            String jwt = parseJwt(request);
-            if (jwt != null && jwtUtil.isTokenValid(jwt)) {
-                String username = jwtUtil.extractUsername(jwt);
+        String jwt = parseJwt(request);
 
-                if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                    UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        if (jwt != null) {
+            try {
+                if (jwtUtil.isTokenValid(jwt)) {
+                    String username = jwtUtil.extractUsername(jwt);
 
-                    if (jwtUtil.validateToken(jwt, userDetails)) {
-                        UsernamePasswordAuthenticationToken authToken =
-                                new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                        authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                        SecurityContextHolder.getContext().setAuthentication(authToken);
+                    if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+                        if (jwtUtil.validateToken(jwt, userDetails)) {
+                            UsernamePasswordAuthenticationToken authToken =
+                                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                            authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                            SecurityContextHolder.getContext().setAuthentication(authToken);
+
+                            log.debug("Authenticated user: {}", username);
+                        }
                     }
+                } else {
+                    log.warn("JWT token is invalid or expired");
                 }
+            } catch (Exception e) {
+                log.error("Cannot set user authentication: {}", e.getMessage());
             }
-        } catch (Exception e) {
-            log.error("Cannot set user authentication: {}", e.getMessage());
         }
 
         filterChain.doFilter(request, response);

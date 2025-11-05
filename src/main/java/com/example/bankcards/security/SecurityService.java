@@ -1,10 +1,10 @@
 package com.example.bankcards.security;
 
 import com.example.bankcards.entity.User;
+import com.example.bankcards.exception.UserNotFoundException;
 import com.example.bankcards.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,33 +14,21 @@ public class SecurityService {
     private final UserService userService;
 
     public boolean isCurrentUser(Long userId) {
-        try {
-            User currentUser = getCurrentUser();
-            return currentUser != null && currentUser.getId().equals(userId);
-        } catch (Exception e) {
-            return false;
+        User currentUser = getCurrentUser();
+        if (currentUser == null) {
+            throw new UserNotFoundException("User not authenticated");
         }
+        return currentUser.getId().equals(userId);
     }
 
     public User getCurrentUser() {
-        try {
-            var authentication = SecurityContextHolder.getContext().getAuthentication();
-            if (authentication == null || !authentication.isAuthenticated()) {
-                return null;
-            }
-
-            Object principal = authentication.getPrincipal();
-            String username;
-
-            if (principal instanceof UserDetails) {
-                username = ((UserDetails) principal).getUsername();
-            } else {
-                username = principal.toString();
-            }
-
-            return userService.getUserByUsername(username);
-        } catch (Exception e) {
-            return null;
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated() ||
+                "anonymousUser".equals(authentication.getPrincipal())) {
+            throw new UserNotFoundException("User not authenticated");
         }
+
+        String username = authentication.getName();
+        return userService.getUserByUsername(username);
     }
 }

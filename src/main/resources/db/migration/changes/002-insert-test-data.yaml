@@ -11,7 +11,7 @@ databaseChangeLog:
                   value: "admin"
               - column:
                   name: password
-                  value: "$2a$10$8.UnVuG9HHgffUDAlk8qfOuVGkqRzgVymGe07xd00DMxs.AQubh4a"  # admin123
+                  value: "$2a$10$XALZQ8zL7v2oKjJpY6n8E.uKjGQ8bY6cT7nVp3mRqS2tW1vX4yZ" # admin123
               - column:
                   name: email
                   value: "admin@bank.com"
@@ -27,7 +27,7 @@ databaseChangeLog:
                   value: "user1"
               - column:
                   name: password
-                  value: "$2a$10$8.UnVuG9HHgffUDAlk8qfOuVGkqRzgVymGe07xd00DMxs.AQubh4a"  # admin123
+                  value: "$2a$10$XALZQ8zL7v2oKjJpY6n8E.uKjGQ8bY6cT7nVp3mRqS2tW1vX4yZ"  # admin123
               - column:
                   name: email
                   value: "user1@bank.com"
@@ -43,7 +43,7 @@ databaseChangeLog:
                   value: "user2"
               - column:
                   name: password
-                  value: "$2a$10$8.UnVuG9HHgffUDAlk8qfOuVGkqRzgVymGe07xd00DMxs.AQubh4a"  # admin123
+                  value: "$2a$10$XALZQ8zL7v2oKjJpY6n8E.uKjGQ8bY6cT7nVp3mRqS2tW1vX4yZ"  # admin123
               - column:
                   name: email
                   value: "user2@bank.com"

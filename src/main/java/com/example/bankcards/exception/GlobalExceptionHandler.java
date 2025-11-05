@@ -65,6 +65,19 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(BadCredentialsException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError handleBadCredentialsException(final BadCredentialsException e) {
+        log.error("400 Bad request: {}", e.getMessage(), e);
+        String stackTrace = getStackTrace(e);
+        return new ApiError(
+                HttpStatus.BAD_REQUEST,
+                "Invalid username or password",
+                e.getMessage(),
+                stackTrace
+        );
+    }
+
     private String getStackTrace(Exception e) {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
