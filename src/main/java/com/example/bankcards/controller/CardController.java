@@ -35,7 +35,7 @@ public class CardController {
     }
 
     @GetMapping("/my/{cardId}")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN') and @cardService.isCardOwner(#cardId)")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @Operation(summary = "Get card by ID")
     public ResponseEntity<CardDto> getCardById(@PathVariable Long cardId) {
         CardDto card = cardService.getCardById(cardId);
@@ -51,7 +51,7 @@ public class CardController {
     }
 
     @PatchMapping("/{cardId}/status")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN') and @cardService.isCardOwner(#cardId)")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @Operation(summary = "Update card status")
     public ResponseEntity<CardDto> updateCardStatus(
             @PathVariable Long cardId,

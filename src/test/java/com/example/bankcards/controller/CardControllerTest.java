@@ -6,7 +6,6 @@ import com.example.bankcards.config.TestSecurityConfig;
 import com.example.bankcards.dto.CardDto;
 import com.example.bankcards.entity.enums.CardStatus;
 import com.example.bankcards.entity.enums.Currency;
-import com.example.bankcards.security.SecurityService;
 import com.example.bankcards.service.card.CardService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

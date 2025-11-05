@@ -7,7 +7,6 @@ import com.example.bankcards.dto.TransferDto;
 import com.example.bankcards.dto.TransferRequest;
 import com.example.bankcards.entity.enums.Currency;
 import com.example.bankcards.entity.enums.TransferStatus;
-import com.example.bankcards.security.SecurityService;
 import com.example.bankcards.service.transfer.TransferService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
