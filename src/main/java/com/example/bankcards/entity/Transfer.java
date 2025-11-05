@@ -1,16 +1,17 @@
 package com.example.bankcards.entity;
 
+import com.example.bankcards.entity.enums.Currency;
 import com.example.bankcards.entity.enums.TransferStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "transfers")
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -29,30 +30,22 @@ public class Transfer {
     @ToString.Exclude
     private BankCard toCard;
 
-    @Column(nullable = false, precision = 15, scale = 2)
-    private BigDecimal amount;
+    @Column(nullable = false)
+    private Long amount;
 
     @Column(length = 255)
     private String description;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
-    private LocalDateTime transferDate;
+    private OffsetDateTime transferDate;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     @Builder.Default
     private TransferStatus status = TransferStatus.PENDING;
 
-    public boolean isCompleted() {
-        return status == TransferStatus.COMPLETED;
-    }
-
-    public boolean isPending() {
-        return status == TransferStatus.PENDING;
-    }
-
-    public boolean isFailed() {
-        return status == TransferStatus.FAILED;
-    }
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 3)
+    private Currency currency;
 }

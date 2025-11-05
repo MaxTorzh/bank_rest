@@ -1,11 +1,11 @@
 package com.example.bankcards.dto;
 
+import com.example.bankcards.entity.enums.Currency;
 import com.example.bankcards.entity.enums.TransferStatus;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Getter
 @Builder
@@ -15,8 +15,9 @@ public class TransferDto {
     private final String fromCardMaskedNumber;
     private final Long toCardId;
     private final String toCardMaskedNumber;
-    private final BigDecimal amount;
+    private final Long amount;
+    private final Currency currency;
     private final String description;
-    private final LocalDateTime transferDate;
+    private final OffsetDateTime transferDate;
     private final TransferStatus status;
 }

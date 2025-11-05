@@ -4,15 +4,12 @@ import com.example.bankcards.entity.enums.Role;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.time.OffsetDateTime;
-
 @Getter
 @Builder
-public class UserDto {
-    private final Long id;
+public class AuthResponse {
+    private final String token;
+    private final String type = "Bearer";
+    private final Long userId;
     private final String username;
-    private final String email;
     private final Role role;
-    private final OffsetDateTime createdAt;
-    private final Integer cardsCount;
 }

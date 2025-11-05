@@ -1,18 +1,19 @@
 package com.example.bankcards.entity;
 
 import com.example.bankcards.entity.enums.CardStatus;
+import com.example.bankcards.entity.enums.Currency;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "bank_cards")
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,8 +26,8 @@ public class BankCard {
     @Column(name = "card_number", nullable = false, unique = true, length = 255)
     private String cardNumber;
 
-    @Column(nullable = false, length = 100)
-    private String cardName;
+    @Column(name = "card_holder_name", nullable = false, length = 100)
+    private String cardHolderName;
 
     @Column(nullable = false)
     private LocalDate expirationDate;
@@ -36,9 +37,14 @@ public class BankCard {
     @Builder.Default
     private CardStatus status = CardStatus.ACTIVE;
 
-    @Column(nullable = false, precision = 15, scale = 2)
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 3)
     @Builder.Default
-    private BigDecimal balance = BigDecimal.ZERO;
+    private Currency currency = Currency.RUB;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private Long balance = 0L;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -47,10 +53,10 @@ public class BankCard {
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    private OffsetDateTime createdAt;
 
     @UpdateTimestamp
-    private LocalDateTime updatedAt;
+    private OffsetDateTime updatedAt;
 
     public boolean isExpired() {
         return expirationDate.isBefore(LocalDate.now());
@@ -58,9 +64,5 @@ public class BankCard {
 
     public boolean isActive() {
         return status == CardStatus.ACTIVE && !isExpired();
-    }
-
-    public boolean isBlocked() {
-        return status == CardStatus.BLOCKED;
     }
 }

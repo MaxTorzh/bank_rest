@@ -6,13 +6,14 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "users")
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,7 +24,7 @@ public class User {
     private Long id;
 
     @Column(unique = true, nullable = false, length = 100)
-    private String name;
+    private String username;
 
     @Column(nullable = false, length = 150)
     private String password;
@@ -43,12 +44,8 @@ public class User {
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    private OffsetDateTime createdAt;
 
     @UpdateTimestamp
-    private LocalDateTime updatedAt;
-
-    public boolean isAdmin() {
-        return role == Role.ROLE_ADMIN;
-    }
+    private OffsetDateTime updatedAt;
 }
