@@ -1,0 +1,11 @@
+package com.example.bankcards;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class BankCardApp {
+    public static void main(String[] args) {
+        SpringApplication.run(BankCardApp.class, args);
+    }
+}
