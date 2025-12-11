@@ -1,7 +1,15 @@
 databaseChangeLog:
   - changeSet:
-      id: 2
+      id: 004-1
       author: bank-app
+      context: test, dev
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: users
+        - sqlCheck:
+            sql: "SELECT COUNT(*) FROM users"
+            expectedResult: "0"
       changes:
         - insert:
             tableName: users
@@ -27,7 +35,7 @@ databaseChangeLog:
                   value: "user1"
               - column:
                   name: password
-                  value: "$2a$10$XALZQ8zL7v2oKjJpY6n8E.uKjGQ8bY6cT7nVp3mRqS2tW1vX4yZ"  # admin123
+                  value: "$2a$10$XALZQ8zL7v2oKjJpY6n8E.uKjGQ8bY6cT7nVp3mRqS2tW1vX4yZ"
               - column:
                   name: email
                   value: "user1@bank.com"
@@ -43,7 +51,7 @@ databaseChangeLog:
                   value: "user2"
               - column:
                   name: password
-                  value: "$2a$10$XALZQ8zL7v2oKjJpY6n8E.uKjGQ8bY6cT7nVp3mRqS2tW1vX4yZ"  # admin123
+                  value: "$2a$10$XALZQ8zL7v2oKjJpY6n8E.uKjGQ8bY6cT7nVp3mRqS2tW1vX4yZ"
               - column:
                   name: email
                   value: "user2@bank.com"
@@ -51,68 +59,126 @@ databaseChangeLog:
                   name: role
                   value: "ROLE_USER"
 
+  - changeSet:
+      id: 004-2
+      author: bank-app
+      context: test, dev
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: bank_cards
+        - sqlCheck:
+            sql: "SELECT COUNT(*) FROM bank_cards"
+            expectedResult: "0"
+      changes:
         - insert:
             tableName: bank_cards
             columns:
               - column:
                   name: card_number
-                  value: "encrypted_card_001"
+                  value: "4111111111111111"
               - column:
                   name: card_holder_name
                   value: "ADMIN USER"
               - column:
                   name: expiration_date
-                  value: "2027-12-31"
+                  valueDate: "2027-12-31"
               - column:
                   name: status
                   value: "ACTIVE"
               - column:
+                  name: currency
+                  value: "RUB"
+              - column:
                   name: balance
-                  value: 10000
+                  valueNumeric: 1000000
               - column:
                   name: user_id
-                  value: 1
+                  valueNumeric: 1
 
         - insert:
             tableName: bank_cards
             columns:
               - column:
                   name: card_number
-                  value: "encrypted_card_002"
+                  value: "4222222222222222"
               - column:
                   name: card_holder_name
                   value: "THOMAS A. ANDERSON"
               - column:
                   name: expiration_date
-                  value: "2026-06-30"
+                  valueDate: "2026-06-30"
               - column:
                   name: status
                   value: "ACTIVE"
               - column:
+                  name: currency
+                  value: "USD"
+              - column:
                   name: balance
-                  value: 5000
+                  valueNumeric: 500000
               - column:
                   name: user_id
-                  value: 2
+                  valueNumeric: 2
 
         - insert:
             tableName: bank_cards
             columns:
               - column:
                   name: card_number
-                  value: "encrypted_card_003"
+                  value: "4333333333333333"
               - column:
                   name: card_holder_name
                   value: "AGENT SMITH"
               - column:
                   name: expiration_date
-                  value: "2025-09-15"
+                  valueDate: "2025-09-15"
               - column:
                   name: status
                   value: "ACTIVE"
               - column:
+                  name: currency
+                  value: "EUR"
+              - column:
                   name: balance
-                  value: 7500
+                  valueNumeric: 750000
               - column:
                   name: user_id
-                  value: 3
+                  valueNumeric: 3
+
+  - changeSet:
+      id: 004-3
+      author: bank-app
+      context: test, dev
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: transfers
+        - sqlCheck:
+            sql: "SELECT COUNT(*) FROM transfers"
+            expectedResult: "0"
+        - sqlCheck:
+            sql: "SELECT COUNT(*) FROM bank_cards WHERE id IN (1, 2)"
+            expectedResult: "2"
+      changes:
+        - insert:
+            tableName: transfers
+            columns:
+              - column:
+                  name: from_card_id
+                  valueNumeric: 1
+              - column:
+                  name: to_card_id
+                  valueNumeric: 2
+              - column:
+                  name: amount
+                  valueNumeric: 10000
+              - column:
+                  name: currency
+                  value: "RUB"
+              - column:
+                  name: description
+                  value: "Test transfer"
+              - column:
+                  name: status
+                  value: "COMPLETED"

@@ -1,7 +1,12 @@
 databaseChangeLog:
   - changeSet:
-      id: 1
+      id: 001-1
       author: bank-app
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: users
       changes:
         - createTable:
             tableName: users
@@ -33,6 +38,7 @@ databaseChangeLog:
               - column:
                   name: role
                   type: VARCHAR(20)
+                  defaultValue: "ROLE_USER"
                   constraints:
                     nullable: false
               - column:
@@ -42,8 +48,18 @@ databaseChangeLog:
               - column:
                   name: updated_at
                   type: TIMESTAMP
-                  defaultValueComputed: CURRENT_TIMESTAMP
 
+  - changeSet:
+      id: 001-2
+      author: bank-app
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: bank_cards
+        - tableExists:
+            tableName: users
+      changes:
         - createTable:
             tableName: bank_cards
             columns:
@@ -68,6 +84,7 @@ databaseChangeLog:
               - column:
                   name: currency
                   type: VARCHAR(3)
+                  defaultValue: "RUB"
               - column:
                   name: expiration_date
                   type: DATE
@@ -76,14 +93,15 @@ databaseChangeLog:
               - column:
                   name: status
                   type: VARCHAR(20)
+                  defaultValue: "ACTIVE"
                   constraints:
                     nullable: false
               - column:
                   name: balance
                   type: BIGINT
+                  defaultValueNumeric: 0
                   constraints:
                     nullable: false
-                  defaultValue: 0
               - column:
                   name: user_id
                   type: BIGINT
@@ -91,6 +109,7 @@ databaseChangeLog:
                     nullable: false
                     foreignKeyName: fk_card_user
                     references: users(id)
+                    onDelete: CASCADE
               - column:
                   name: created_at
                   type: TIMESTAMP
@@ -98,8 +117,18 @@ databaseChangeLog:
               - column:
                   name: updated_at
                   type: TIMESTAMP
-                  defaultValueComputed: CURRENT_TIMESTAMP
 
+  - changeSet:
+      id: 001-3
+      author: bank-app
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: transfers
+        - tableExists:
+            tableName: bank_cards
+      changes:
         - createTable:
             tableName: transfers
             columns:
@@ -132,6 +161,7 @@ databaseChangeLog:
               - column:
                   name: currency
                   type: VARCHAR(3)
+                  defaultValue: "RUB"
               - column:
                   name: description
                   type: VARCHAR(255)
@@ -142,26 +172,6 @@ databaseChangeLog:
               - column:
                   name: status
                   type: VARCHAR(20)
+                  defaultValue: "PENDING"
                   constraints:
                     nullable: false
-
-        - createIndex:
-            tableName: bank_cards
-            indexName: idx_card_user_id
-            columns:
-              - column:
-                  name: user_id
-
-        - createIndex:
-            tableName: bank_cards
-            indexName: idx_card_status
-            columns:
-              - column:
-                  name: status
-
-        - createIndex:
-            tableName: transfers
-            indexName: idx_transfer_date
-            columns:
-              - column:
-                  name: transfer_date

@@ -1,0 +1,119 @@
+databaseChangeLog:
+  - changeSet:
+      id: 003-1
+      author: bank-app
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: users
+        - not:
+            - indexExists:
+                tableName: users
+                indexName: idx_users_username
+      changes:
+        - createIndex:
+            tableName: users
+            indexName: idx_users_username
+            columns:
+              - column:
+                  name: username
+            unique: true
+
+        - createIndex:
+            tableName: users
+            indexName: idx_users_email
+            columns:
+              - column:
+                  name: email
+            unique: true
+
+  - changeSet:
+      id: 003-2
+      author: bank-app
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: bank_cards
+        - not:
+            - indexExists:
+                tableName: bank_cards
+                indexName: idx_bank_cards_user_id
+      changes:
+        - createIndex:
+            tableName: bank_cards
+            indexName: idx_bank_cards_user_id
+            columns:
+              - column:
+                  name: user_id
+
+        - createIndex:
+            tableName: bank_cards
+            indexName: idx_bank_cards_status
+            columns:
+              - column:
+                  name: status
+
+        - createIndex:
+            tableName: bank_cards
+            indexName: idx_bank_cards_expiration
+            columns:
+              - column:
+                  name: expiration_date
+
+        - createIndex:
+            tableName: bank_cards
+            indexName: idx_bank_cards_user_status
+            columns:
+              - column:
+                  name: user_id
+              - column:
+                  name: status
+
+  - changeSet:
+      id: 003-3
+      author: bank-app
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: transfers
+        - not:
+            - indexExists:
+                tableName: transfers
+                indexName: idx_transfers_from_card
+      changes:
+        - createIndex:
+            tableName: transfers
+            indexName: idx_transfers_from_card
+            columns:
+              - column:
+                  name: from_card_id
+
+        - createIndex:
+            tableName: transfers
+            indexName: idx_transfers_to_card
+            columns:
+              - column:
+                  name: to_card_id
+
+        - createIndex:
+            tableName: transfers
+            indexName: idx_transfers_date
+            columns:
+              - column:
+                  name: transfer_date
+
+        - createIndex:
+            tableName: transfers
+            indexName: idx_transfers_status
+            columns:
+              - column:
+                  name: status
+
+        - createIndex:
+            tableName: transfers
+            indexName: idx_transfers_user_date
+            columns:
+              - column:
+                  name: from_card_id
+              - column:
+                  name: transfer_date

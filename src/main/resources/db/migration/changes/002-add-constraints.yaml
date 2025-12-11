@@ -1,0 +1,57 @@
+databaseChangeLog:
+  - changeSet:
+      id: 002-1
+      author: bank-app
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: bank_cards
+        - columnExists:
+            tableName: bank_cards
+            columnName: balance
+      changes:
+        - addCheckConstraint:
+            tableName: bank_cards
+            constraintName: ck_bank_cards_balance_non_negative
+            checkCondition: "balance >= 0"
+
+        - addCheckConstraint:
+            tableName: bank_cards
+            constraintName: ck_bank_cards_status_valid
+            checkCondition: "status IN ('ACTIVE', 'BLOCKED')"
+
+        - sql:
+            sql: >
+              ALTER TABLE bank_cards 
+              ADD CONSTRAINT ck_bank_cards_expiration_future 
+              CHECK (expiration_date >= CURRENT_DATE)
+            dbms: postgresql
+        - sql:
+            sql: >
+              ALTER TABLE bank_cards 
+              ADD CONSTRAINT ck_bank_cards_expiration_future 
+              CHECK (expiration_date >= CURDATE())
+            dbms: mysql, h2
+
+  - changeSet:
+      id: 002-2
+      author: bank-app
+      preConditions:
+        - onFail: MARK_RAN
+        - tableExists:
+            tableName: transfers
+      changes:
+        - addCheckConstraint:
+            tableName: transfers
+            constraintName: ck_transfers_amount_positive
+            checkCondition: "amount > 0"
+
+        - addCheckConstraint:
+            tableName: transfers
+            constraintName: ck_transfers_status_valid
+            checkCondition: "status IN ('PENDING', 'COMPLETED', 'FAILED', 'CANCELLED')"
+
+        - addCheckConstraint:
+            tableName: transfers
+            constraintName: ck_transfers_different_cards
+            checkCondition: "from_card_id != to_card_id"

@@ -1,5 +1,23 @@
 databaseChangeLog:
+  - preConditions:
+      - dbms:
+          type: h2, postgresql, mysql
+      - runningAs:
+          username: sa
+
   - include:
       file: db/migration/changes/001-initial-schema.yaml
+      relativeToChangelogFile: true
+
   - include:
-      file: db/migration/changes/002-insert-test-data.yaml
+      file: db/migration/changes/002-add-constraints.yaml
+      relativeToChangelogFile: true
+
+  - include:
+      file: db/migration/changes/003-add-indexes.yaml
+      relativeToChangelogFile: true
+
+  - include:
+      file: db/migration/changes/004-insert-test-data.yaml
+      relativeToChangelogFile: true
+      context: test, dev
